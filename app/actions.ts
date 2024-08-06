@@ -1,7 +1,6 @@
 "use server";
 
 import { PrismaClient } from "@prisma/client";
-import { randomInt } from "crypto";
 import Sqids from "sqids";
 
 const prisma = new PrismaClient();
