@@ -11,8 +11,9 @@ datasource db {
 }
 
 model Url {
-  id String @id
+  id Int @id @default(autoincrement())
   fullUrl String
+  shortUrl String?
   createdBy String
   createdAt DateTime @default(now())
 }
