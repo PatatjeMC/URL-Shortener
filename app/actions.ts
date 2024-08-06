@@ -33,3 +33,13 @@ export async function create(url: string) {
 
     return shortUrl;
 }
+
+export async function get(shortUrl: string) {
+    const shortenedUrl = await prisma.url.findFirst({
+        where: {
+            shortUrl
+        }
+    })
+
+    return shortenedUrl
+}

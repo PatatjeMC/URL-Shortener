@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { create } from "./actions";
 import { FormEvent } from "react";
 
-export default function Home() {
+export default function Page() {
 	return (
 		<div className="flex justify-center items-center h-screen w-screen">
 			<form onSubmit={onSubmit} className="w-[40%] flex h-14">
