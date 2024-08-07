@@ -18,6 +18,11 @@ export default function Page() {
 	const [modalIsOpen, setModalIsOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [shortUrl, setShortUrl] = useState<string | null>(null);
+
+	const hostname = `${window.location.protocol}//${window.location.hostname}${
+		window.location.port && ":" + window.location.port
+	}`;
 
 	function onSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
@@ -43,10 +48,12 @@ export default function Page() {
 		}
 
 		create(url).then((data) => {
-			console.log(data);
 			setLoading(false);
 
 			//TODO: Check if error occured and return error
+
+			const fullUrl = hostname + "/" + data;
+			setShortUrl(fullUrl);
 		});
 	}
 
