@@ -5,33 +5,68 @@ import { Input } from "@/components/ui/input";
 import { create } from "./actions";
 import { FormEvent, useState } from "react";
 import { Loader2 } from "lucide-react";
+import {
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader,
+} from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { z } from "zod";
 
 export default function Page() {
 	const [modalIsOpen, setModalIsOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
 
 	function onSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 		setLoading(true);
+		setError(null);
 
 		const formData = new FormData(event.currentTarget);
-		create(formData.get("url") as string).then((data) => {
+
+		let urlObject = z
+			.string()
+			.regex(/(^$|(http(s)?:\/\/)?([\w-]+\.)+[\w-]+([\w- ;,.\/?%&=]*))/)
+			.safeParse(formData.get("url"));
+
+		if (!urlObject.success) {
+			setError("The provided URL is not a valid URL.");
+			return setLoading(false);
+		}
+
+		let url = urlObject.data;
+
+		if (!url.startsWith("https://") && !url.startsWith("http://")) {
+			url = "https://" + url;
+		}
+
+		create(url).then((data) => {
 			console.log(data);
 			setLoading(false);
+
+			//TODO: Check if error occured and return error
 		});
 	}
 
 	return (
 		<>
 			<div className="flex justify-center items-center h-screen w-screen">
-				<form onSubmit={onSubmit} className="w-[40%] flex h-14">
+				<form onSubmit={onSubmit} className="w-[40vw] flex h-14">
+					<p className="absolute translate-y-[-24px] text-destructive">
+						{error}
+					</p>
 					<Input
 						name="url"
 						placeholder="Enter URL to shorten!"
-						className="h-full rounded-r-none"
+						className={cn(
+							"h-full rounded-r-none",
+							error && "border-destructive border-r-0"
+						)}
 						disabled={loading}
 					></Input>
-					<Button variant={"default"} className="h-full rounded-l-none w-24">
+					<Button variant="default" className="h-full rounded-l-none w-24">
 						{!loading && "Shorten"}
 						{loading && <Loader2 className="animate-spin"></Loader2>}
 					</Button>
@@ -39,7 +74,11 @@ export default function Page() {
 			</div>
 			{modalIsOpen && (
 				<div className="bg-transparent/50 absolute h-full w-full top-0 left-0 flex justify-center items-center">
-					<div>test</div>
+					<Card>
+						<CardHeader></CardHeader>
+						<CardContent></CardContent>
+						<CardFooter></CardFooter>
+					</Card>
 				</div>
 			)}
 		</>
